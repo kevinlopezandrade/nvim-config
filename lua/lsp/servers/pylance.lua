@@ -44,10 +44,16 @@ end
 function M.launch()
         vim.lsp.start({
                 name = "pylance",
-                capabilities = require('cmp_nvim_lsp').default_capabilities(),
                 cmd = {"node", "/home/kev/Builds/pylance/extension/dist/server.bundle.js", "--stdio"},
                 settings = settings,
                 root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
+                before_init = function(initialize_params, config)
+                    cmp_capabilities = require("cmp_nvim_lsp").default_capabilities().textDocument.completion
+                    initialize_params.capabilities.textDocument.completion = cmp_capabilities
+
+                    -- Check LSP protocol specification for understanding the following line.
+                    initialize_params.capabilities.textDocument.publishDiagnostics.tagSupport = {2}
+                end,
                 on_init = function (client, results)
                         if results.offsetEncoding then
                                 client.offset_encoding = results.offsetEncoding
@@ -59,8 +65,6 @@ function M.launch()
                                 })
                         end
 
-                        -- Disable the ones I don't want to have, in combination with Jedi.
-                        local capabilities = client.server_capabilities
                 end,
                 on_attach = function(code, signal, client_id)
                     vim.api.nvim_buf_create_user_command(0, "PylanceExtractVariable", extract_variable, {

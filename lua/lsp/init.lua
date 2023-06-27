@@ -1,6 +1,4 @@
 -- LSP Server configurations.
-local jedi = require('lsp.servers.jedi')
-local pyright = require('lsp.servers.pyright')
 local pylance = require('lsp.servers.pylance')
 
 -- I must put here the enabling of the providers so that
@@ -8,8 +6,6 @@ local pylance = require('lsp.servers.pylance')
 vim.api.nvim_create_autocmd('FileType', {
     pattern = "python",
     callback = function()
-        -- jedi.launch()
-        -- pyright.launch()
         pylance.launch()
     end
 })
@@ -24,13 +20,11 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', '<leader>lc', vim.lsp.buf.incoming_calls, opts)
         vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, opts)
-
-        -- vim.cmd([[
-        -- augroup document_highlight
-        -- autocmd!
-        --     autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()
-        --     autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-        -- augroup END
-        -- ]])
     end,
 })
+
+local stop_lsp = function ()
+    vim.lsp.stop_client(vim.lsp.get_active_clients())
+end
+
+vim.api.nvim_create_user_command('StopLSP', stop_lsp , {})
