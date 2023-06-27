@@ -44,7 +44,7 @@ end
 function M.launch()
         vim.lsp.start({
                 name = "pylance",
-                cmd = {"node", "/home/kev/Builds/pylance/extension/dist/server.bundle.js", "--stdio"},
+                cmd = {"node", vim.fn.expand('$HOME/Builds/pylance/extension/dist/server.bundle.js'), "--stdio"},
                 settings = settings,
                 root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
                 before_init = function(initialize_params, config)
