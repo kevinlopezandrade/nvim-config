@@ -23,7 +23,8 @@ return {
                     "%.pkl",
                     "%.jpg",
                     "%.jpeg",
-                    "%.png"
+                    "%.png",
+                    "%.pyc"
                 },
                 mappings = {
                     i = {

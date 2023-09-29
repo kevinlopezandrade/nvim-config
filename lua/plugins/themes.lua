@@ -4,13 +4,20 @@ return {
     },
     "rebelot/kanagawa.nvim",
     {
-        'sam4llis/nvim-tundra',
+        "EdenEast/nightfox.nvim",
         priority = 1000,
         lazy = false,
         config = function()
-            local tundra = require("nvim-tundra")
-            tundra.setup({})
-            vim.cmd("colorscheme tundra")
+            vim.cmd("colorscheme duskfox")
+        end
+    },
+    {
+        'sam4llis/nvim-tundra',
+        lazy = false,
+        config = function()
+            -- local tundra = require("nvim-tundra")
+            -- tundra.setup({})
+            -- vim.cmd("colorscheme tundra")
         end
     }
 }
