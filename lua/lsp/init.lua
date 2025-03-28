@@ -1,14 +1,4 @@
 -- LSP Server configurations.
-local pylance = require('lsp.servers.pylance')
-
--- I must put here the enabling of the providers so that
--- if one is not avalaible then use fully the other ones.
-vim.api.nvim_create_autocmd('FileType', {
-    pattern = "python",
-    callback = function()
-        pylance.launch()
-    end
-})
 
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
@@ -23,8 +13,25 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
-local stop_lsp = function ()
-    vim.lsp.stop_client(vim.lsp.get_active_clients())
-end
+local settings = {
+    basedpyright = {
+        disableOrganizeImports = true,
+        analysis = {
+            useLibraryCodeForTypes = true, -- I can test this manually.
+            typeCheckingMode = "strict"
+        }
+    },
+    telemetry = {
+        telemetryLevel = "off",
+    }
+}
 
-vim.api.nvim_create_user_command('StopLSP', stop_lsp , {})
+vim.lsp.config['basedpyright'] = {
+    name = "basedpyright",
+    cmd = {"basedpyright-langserver", "--stdio"},
+    settings = settings,
+    root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
+    filetypes = {"python"},
+}
+
+vim.lsp.enable('basedpyright')

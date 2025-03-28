@@ -1,0 +1,9 @@
+{
+    "foo": {
+        "prefix": "debug",
+        "body": [
+            "import ipdb",
+            "ipdb.set_trace()"
+        ]
+    }
+}
