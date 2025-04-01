@@ -32,14 +32,14 @@ return {
             preset = 'none',
             ['<Tab>'] = {
                 function(cmp)
-                    if cmp.is_menu_visible() then return cmp.select_next({ auto_insert = false })
+                    if cmp.is_menu_visible() then return cmp.select_next({ auto_insert = true })
                     else return nil end
                 end,
                 'fallback'
             },
             ['<S-Tab>'] = {
                 function(cmp)
-                    if cmp.is_menu_visible() then return cmp.select_prev({ auto_insert = false })
+                    if cmp.is_menu_visible() then return cmp.select_prev({ auto_insert = true })
                     else return nil end
                 end,
                 'fallback'
@@ -64,7 +64,13 @@ return {
         },
 
         -- (Default) Only show the documentation popup when manually triggered
-        completion = { documentation = { auto_show = false } , ghost_text = {enabled = true}},
+        completion = {
+            documentation = { auto_show = false },
+            ghost_text = {enabled = false},
+            list = {
+                selection = {preselect = false}
+            }
+        },
         
 
 
