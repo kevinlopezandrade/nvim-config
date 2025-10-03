@@ -35,3 +35,12 @@ vim.lsp.config['basedpyright'] = {
 }
 
 vim.lsp.enable('basedpyright')
+
+-- vim.lsp.config['zuban'] = {
+--     name = "zuban",
+--     cmd = {"zuban", "server"},
+--     root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
+--     filetypes = {"python"}
+-- }
+--
+-- vim.lsp.enable('zuban')

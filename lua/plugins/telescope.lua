@@ -53,12 +53,6 @@ return {
         })
 
         local opts = { noremap = true, silent = true }
-        -- vim.keymap.set('n', '<leader>ff', builtin.find_files, opts)
         vim.keymap.set('n', '<leader>ff', builtin.buffers, opts)
-
-        vim.keymap.set('n', '<leader>fm', builtin.marks, opts)
-
-        vim.keymap.set('n', '<leader>fs', picker_with_opts(builtin.lsp_dynamic_workspace_symbols, {ignore_symbols = "variable"}), opts)
-        vim.keymap.set('n', '<leader>fd', picker_with_opts(builtin.lsp_document_symbols, {show_line = true}), opts)
     end
 }
