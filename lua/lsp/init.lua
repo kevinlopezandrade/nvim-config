@@ -1,4 +1,15 @@
 -- LSP Server configurations.
+local conform = require("conform")
+conform.setup({
+    formatters_by_ft = {
+        python = {
+            -- To run the Ruff formatter.
+            "ruff_format",
+            -- To organize the imports.
+            "ruff_organize_imports",
+        },
+    },
+})
 
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(args)
@@ -9,7 +20,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', 'R', vim.lsp.buf.references, opts)
         vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', '<leader>lc', vim.lsp.buf.incoming_calls, opts)
-        vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, opts)
+        vim.keymap.set('n', '<leader>lf', conform.format, opts)
     end,
 })
 
@@ -26,21 +37,36 @@ local settings = {
     }
 }
 
+-- Basedpyright
 vim.lsp.config['basedpyright'] = {
     name = "basedpyright",
     cmd = {"basedpyright-langserver", "--stdio"},
     settings = settings,
-    root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
+    root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
     filetypes = {"python"},
 }
 
 vim.lsp.enable('basedpyright')
 
--- vim.lsp.config['zuban'] = {
---     name = "zuban",
---     cmd = {"zuban", "server"},
---     root_dir = vim.fs.dirname(vim.fs.find({'setup.py', 'pyproject.toml', "environment.yml"}, { upward = true})[1]),
---     filetypes = {"python"}
+-- Ty language server
+-- vim.lsp.config['ty'] =  {
+--     name = "ty",
+--     cmd = {"ty", "server"},
+--     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
+--     filetypes = {"python"},
 -- }
---
--- vim.lsp.enable('zuban')
+-- vim.lsp.enable('ty')
+
+-- Ruff
+vim.lsp.config['ruff'] = {
+    name = "ruff",
+    cmd = {"ruff", "server"},
+    root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
+    filetypes = {"python"},
+    init_options = {
+        settings = {
+            configurationPreference = "filesystemFirst"
+        }
+    }
+}
+vim.lsp.enable('ruff')
