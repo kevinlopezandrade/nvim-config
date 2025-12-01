@@ -1,12 +1,30 @@
 -- LSP Server configurations.
 local conform = require("conform")
 conform.setup({
+    -- log_level = vim.log.levels.DEBUG,
+    formatters = {
+        ruff_organize_imports = {
+            -- We replace "I001" with "I" to include "required-imports" (I002)
+            args = {
+                "check",
+                "--force-exclude",
+                "--select=I",
+                "--fix",
+                "--exit-zero",
+                "--no-cache",
+                "--stdin-filename",
+                "$FILENAME",
+                "-"
+            },
+        },
+    },
     formatters_by_ft = {
         python = {
-            -- To run the Ruff formatter.
-            "ruff_format",
             -- To organize the imports.
             "ruff_organize_imports",
+
+            -- To run the Ruff formatter.
+            "ruff_format",
         },
     },
 })
@@ -56,6 +74,9 @@ vim.lsp.enable('basedpyright')
 --     filetypes = {"python"},
 -- }
 -- vim.lsp.enable('ty')
+--
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.general.positionEncodings = { "utf-16" }
 
 -- Ruff
 vim.lsp.config['ruff'] = {
@@ -67,6 +88,15 @@ vim.lsp.config['ruff'] = {
         settings = {
             configurationPreference = "filesystemFirst"
         }
-    }
+    },
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+        -- Disable the LSP formatter so it doesn't fight with Conform
+        client.server_capabilities.documentFormattingProvider = false
+
+        -- (Optional) Disable Hover if you prefer Pyright/BasedPyright for type info,
+        -- though Ruff's hover is useful for explaining linting rules.
+        client.server_capabilities.hoverProvider = false
+    end
 }
 vim.lsp.enable('ruff')
