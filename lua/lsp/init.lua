@@ -38,7 +38,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.keymap.set('n', 'R', vim.lsp.buf.references, opts)
         vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', '<leader>lc', vim.lsp.buf.incoming_calls, opts)
-        vim.keymap.set('n', '<leader>lf', conform.format, opts)
+        vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', '<leader>lf', function()
+            conform.format({ lsp_fallback = true })
+        end, opts)
     end,
 })
 
