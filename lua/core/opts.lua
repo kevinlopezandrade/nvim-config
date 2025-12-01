@@ -20,6 +20,7 @@ vim.opt.tabstop = 4 -- The size of an actual TAB character.
 vim.opt.shiftwidth = 4 -- The size in spaces of an indent. So the size when you press ">".
 vim.opt.laststatus = 2 -- Always show the status bar, and tow different ones if split.
 vim.opt.background = "dark" -- Type of colorscheme
+vim.o.winborder = 'rounded' -- Rounder borders by default
 
 if vim.env.SSH_TTY then
     vim.g.clipboard = 'osc52'

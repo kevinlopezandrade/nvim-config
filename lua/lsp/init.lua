@@ -1,3 +1,25 @@
+-- LSP Config
+
+vim.diagnostic.config({
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = "x",
+            [vim.diagnostic.severity.WARN] = "w",
+            [vim.diagnostic.severity.HINT] = "h",
+            [vim.diagnostic.severity.INFO] = "#",
+        },
+    },
+    virtual_text = false,
+    signs = true,
+    underline = true,
+    update_in_insert = false,
+    severity_sort = true,
+    float = {
+        border = "rounded",
+        source = "always",
+    },
+})
+
 -- LSP Server configurations.
 local conform = require("conform")
 conform.setup({
