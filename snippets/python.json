@@ -24,5 +24,12 @@
             "    return"
         ],
         "description": "Create a marimo function with @app.function decorator"
+    },
+    "Exit": {
+        "prefix": "exit",
+        "body": [
+            "import sys",
+            "sys.exit(1)"
+        ]
     }
 }
