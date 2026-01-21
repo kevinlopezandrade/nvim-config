@@ -95,13 +95,99 @@ local function git_hunk_picker(opts)
         },
     }, opts)
 
-    pickers.new(picker_opts, {
+    -- Create sorter without display highlighting
+    local sorter = conf.generic_sorter(picker_opts)
+    local original_highlighter = sorter.highlighter
+    sorter.highlighter = function(_, prompt, display)
+        -- Return empty highlights to disable visual highlighting on display text
+        return {}
+    end
+
+    -- Function to update highlights in preview (defined after sorter/highlighter)
+    local function update_preview_highlights(prompt_bufnr)
+        local state = require('telescope.state')
+        local status = state.get_status(prompt_bufnr)
+        local picker = status.picker
+
+        if not picker then
+            return
+        end
+
+        -- Get preview buffer from previewer's internal state
+        local previewer = picker.previewer
+        if not previewer or not previewer.state then
+            return
+        end
+
+        local preview_bufnr = previewer.state.bufnr
+        if not preview_bufnr or not vim.api.nvim_buf_is_valid(preview_bufnr) then
+            return
+        end
+
+        local action_state = require('telescope.actions.state')
+        local entry = action_state.get_selected_entry(prompt_bufnr)
+        if not entry or not entry.ordinal then
+            return
+        end
+
+        local prompt = picker:_get_prompt()
+        if prompt == "" then
+            return
+        end
+
+        -- Get highlights from sorter
+        local highlights = original_highlighter(sorter, prompt, entry.ordinal)
+        if not highlights or #highlights == 0 then
+            return
+        end
+
+        -- Get preview lines to build character map
+        local preview_lines = vim.api.nvim_buf_get_lines(preview_bufnr, 0, -1, false)
+
+        local ns_id = vim.api.nvim_create_namespace('telescope_hunk_matches')
+        vim.api.nvim_buf_clear_namespace(preview_bufnr, ns_id, 0, -1)
+
+        -- Build character position map (ordinal position -> preview buffer position)
+        local char_to_pos = {}
+        local char_pos = 1
+
+        for i = 3, #preview_lines do
+            local line = preview_lines[i]
+            if line and #line > 0 then
+                local content = line:sub(2)  -- Remove +/- prefix
+
+                for j = 1, #content do
+                    char_to_pos[char_pos] = { line = i - 1, col = j }
+                    char_pos = char_pos + 1
+                end
+
+                char_pos = char_pos + 1  -- Account for newline in ordinal
+            end
+        end
+
+        -- Apply highlights
+        for _, pos in ipairs(highlights) do
+            local mapped = char_to_pos[pos]
+            if mapped then
+                vim.api.nvim_buf_add_highlight(
+                    preview_bufnr,
+                    ns_id,
+                    'TelescopeMatching',
+                    mapped.line,
+                    mapped.col,
+                    mapped.col + 1
+                )
+            end
+        end
+    end
+
+    local picker_obj = pickers.new(picker_opts, {
         prompt_title = 'Git Hunks',
         finder = finders.new_table({
             results = entries,
             entry_maker = function(entry) return entry end,
         }),
-        sorter = conf.generic_sorter(picker_opts),
+        sorter = sorter,
         previewer = previewers.new_buffer_previewer({
             title = "Hunk Preview",
             define_preview = function(self, entry, status)
@@ -131,6 +217,11 @@ local function git_hunk_picker(opts)
 
                 -- Apply diff syntax highlighting
                 vim.api.nvim_buf_set_option(self.state.bufnr, 'filetype', 'diff')
+
+                -- Update highlights (also called via autocmd on prompt change)
+                vim.schedule(function()
+                    update_preview_highlights(status.picker.prompt_bufnr)
+                end)
             end,
         }),
         attach_mappings = function(prompt_bufnr, map)
@@ -145,9 +236,22 @@ local function git_hunk_picker(opts)
                 -- Center the view
                 vim.cmd('normal! zz')
             end)
+
+            -- Set up autocmd to update highlights on prompt change
+            local augroup = vim.api.nvim_create_augroup('TelescopeHunkHighlight_' .. prompt_bufnr, { clear = true })
+            vim.api.nvim_create_autocmd({'TextChangedI', 'TextChanged'}, {
+                group = augroup,
+                buffer = prompt_bufnr,
+                callback = function()
+                    update_preview_highlights(prompt_bufnr)
+                end,
+            })
+
             return true
         end,
-    }):find()
+    })
+
+    picker_obj:find()
 end
 
 return {
