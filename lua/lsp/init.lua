@@ -1,21 +1,9 @@
 -- LSP Config
 
 vim.diagnostic.config({
-    signs = {
-        text = {
-            [vim.diagnostic.severity.ERROR] = "x",
-            [vim.diagnostic.severity.WARN] = "w",
-            [vim.diagnostic.severity.HINT] = "h",
-            [vim.diagnostic.severity.INFO] = "#",
-        },
-    },
-    virtual_text = false,
-    signs = true,
-    underline = true,
-    update_in_insert = false,
-    severity_sort = true,
+    signs = false,
     float = {
-        border = "rounded",
+        border = "single",
         source = "always",
     },
 })
@@ -67,7 +55,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
-local settings = {
+local basedpyright_settings = {
     basedpyright = {
         disableOrganizeImports = true,
         analysis = {
@@ -81,15 +69,23 @@ local settings = {
 }
 
 -- Basedpyright
-vim.lsp.config['basedpyright'] = {
-    name = "basedpyright",
-    cmd = {"basedpyright-langserver", "--stdio"},
-    settings = settings,
+-- vim.lsp.config['basedpyright'] = {
+--     name = "basedpyright",
+--     cmd = {"basedpyright-langserver", "--stdio"},
+--     settings = basedpyright_settings,
+--     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
+--     filetypes = {"python"},
+-- }
+-- vim.lsp.enable('basedpyright')
+
+vim.lsp.config['pylance'] = {
+    name = "pylance",
+    cmd = {"basedpy", "--stdio"},
     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
     filetypes = {"python"},
 }
+vim.lsp.enable('pylance')
 
-vim.lsp.enable('basedpyright')
 
 -- Ty language server
 -- vim.lsp.config['ty'] =  {
@@ -99,29 +95,29 @@ vim.lsp.enable('basedpyright')
 --     filetypes = {"python"},
 -- }
 -- vim.lsp.enable('ty')
+
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- capabilities.general.positionEncodings = { "utf-16" }
 --
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.general.positionEncodings = { "utf-16" }
-
 -- Ruff
-vim.lsp.config['ruff'] = {
-    name = "ruff",
-    cmd = {"ruff", "server"},
-    root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
-    filetypes = {"python"},
-    init_options = {
-        settings = {
-            configurationPreference = "filesystemFirst"
-        }
-    },
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        -- Disable the LSP formatter so it doesn't fight with Conform
-        client.server_capabilities.documentFormattingProvider = false
-
-        -- (Optional) Disable Hover if you prefer Pyright/BasedPyright for type info,
-        -- though Ruff's hover is useful for explaining linting rules.
-        client.server_capabilities.hoverProvider = false
-    end
-}
-vim.lsp.enable('ruff')
+-- vim.lsp.config['ruff'] = {
+--     name = "ruff",
+--     cmd = {"ruff", "server"},
+--     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
+--     filetypes = {"python"},
+--     init_options = {
+--         settings = {
+--             configurationPreference = "filesystemFirst"
+--         }
+--     },
+--     capabilities = capabilities,
+--     on_attach = function(client, bufnr)
+--         -- Disable the LSP formatter so it doesn't fight with Conform
+--         client.server_capabilities.documentFormattingProvider = false
+--
+--         -- (Optional) Disable Hover if you prefer Pyright/BasedPyright for type info,
+--         -- though Ruff's hover is useful for explaining linting rules.
+--         client.server_capabilities.hoverProvider = false
+--     end
+-- }
+-- vim.lsp.enable('ruff')

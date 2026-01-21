@@ -1,9 +1,28 @@
 {
-    "foo": {
+    "Debug": {
         "prefix": "debug",
         "body": [
             "import ipdb",
             "ipdb.set_trace()"
         ]
+    },
+    "Marimo Cell": {
+        "prefix": "cell",
+        "body": [
+            "@app.cell",
+            "def _():",
+            "    $1",
+            "    return"
+        ],
+        "description": "Create a marimo cell with @app.cell decorator"
+    },
+    "Marimo Function": {
+        "prefix": "fcell",
+        "body": [
+            "@app.function",
+            "def $1():",
+            "    return"
+        ],
+        "description": "Create a marimo function with @app.function decorator"
     }
 }
