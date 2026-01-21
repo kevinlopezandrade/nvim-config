@@ -147,6 +147,7 @@ return {
             defaults = {
                 preview = false,
                 color_devicons = false,
+                sorting_strategy = "ascending",
                 file_ignore_patterns = {
                     "%.pkl",
                     "%.jpg",
@@ -167,7 +168,7 @@ return {
                     horizontal = {
                         height = 0.4,
                         preview_cutoff = 120,
-                        prompt_position = "bottom",
+                        prompt_position = "top",
                         width = 0.55
                     },
                 }
@@ -190,6 +191,6 @@ return {
         vim.keymap.set('n', '<leader>fd', picker_with_opts(builtin.lsp_document_symbols, {show_line = true}), opts)
 
         -- Git hunk picker
-        vim.keymap.set('n', '<leader>gh', git_hunk_picker, opts)
+        vim.keymap.set('n', '<leader>fg', git_hunk_picker, opts)
     end
 }
