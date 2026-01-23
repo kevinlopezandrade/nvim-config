@@ -44,7 +44,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local opts = { buffer = args.buf, silent = true }
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', '<C-K>', vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('i', '<C-k>', vim.lsp.buf.signature_help, opts)
         vim.keymap.set('n', 'R', vim.lsp.buf.references, opts)
         vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', '<leader>lc', vim.lsp.buf.incoming_calls, opts)
@@ -60,7 +60,11 @@ local basedpyright_settings = {
         disableOrganizeImports = true,
         analysis = {
             useLibraryCodeForTypes = true, -- I can test this manually.
-            typeCheckingMode = "strict"
+            typeCheckingMode = "strict",
+            diagnosticSeverityOverrides = {
+                reportMissingTypeStubs = false,
+                reportUnusedExpression = false,
+            }
         }
     },
     telemetry = {
@@ -69,22 +73,22 @@ local basedpyright_settings = {
 }
 
 -- Basedpyright
--- vim.lsp.config['basedpyright'] = {
---     name = "basedpyright",
---     cmd = {"basedpyright-langserver", "--stdio"},
---     settings = basedpyright_settings,
---     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
---     filetypes = {"python"},
--- }
--- vim.lsp.enable('basedpyright')
-
-vim.lsp.config['pylance'] = {
-    name = "pylance",
-    cmd = {"basedpy", "--stdio"},
+vim.lsp.config['basedpyright'] = {
+    name = "basedpyright",
+    cmd = {"basedpyright-langserver", "--stdio"},
+    settings = basedpyright_settings,
     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
     filetypes = {"python"},
 }
-vim.lsp.enable('pylance')
+vim.lsp.enable('basedpyright')
+
+-- vim.lsp.config['pylance'] = {
+--     name = "pylance",
+--     cmd = {"basedpy", "--stdio"},
+--     root_markers = { {'pyproject.toml', 'setup.py'}, '.git' },
+--     filetypes = {"python"},
+-- }
+-- vim.lsp.enable('pylance')
 
 
 -- Ty language server

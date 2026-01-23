@@ -50,28 +50,7 @@ local function git_hunk_picker(opts)
 
         local line_range = string.format("L%d-%d", hunk.added.start, hunk.vend)
 
-        -- Get first line of hunk content (prefer removed for changes/deletes, added for adds)
-        local first_line = ""
-        local line_prefix = ""
-        if hunk.removed and hunk.removed.lines and #hunk.removed.lines > 0 then
-            first_line = hunk.removed.lines[1]
-            line_prefix = "- "
-        elseif hunk.added and hunk.added.lines and #hunk.added.lines > 0 then
-            first_line = hunk.added.lines[1]
-            line_prefix = "+ "
-        end
-
-        -- Remove leading whitespace
-        first_line = first_line:gsub("^%s+", "")
-
-        -- Truncate if too long
-        local max_length = 60
-        if #first_line > max_length then
-            first_line = first_line:sub(1, max_length) .. "..."
-        end
-
-        local display_text = string.format("%s %s: %s | %s%s",
-            type_icon, line_range, hunk.type, line_prefix, first_line)
+        local display_text = string.format("%s %s: %s", type_icon, line_range, hunk.type)
 
         table.insert(entries, {
             value = hunk,
