@@ -1,7 +1,5 @@
 return {
-    -- "git@github.com:kevinlopezandrade/marimo-nvim.git",
-    "marimo-nvim",
-    dir = "/home/kev/marimo-nvim/",
+    "git@github.com:kevinlopezandrade/marimo-nvim.git",
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
     },
